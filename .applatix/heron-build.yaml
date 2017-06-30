@@ -9,7 +9,7 @@ container:
     cpu_cores: 1.5
   image: streamlio/build:latest-heron-abc%%os%%
   docker_options: "-e CC=%%build_env_cc%% -e CXX=%%build_env_cxx%% -e CPP=%%build_env_cpp%% -e CXXCPP=%%build_env_cxxcpp%%" 
-  command: bash -c 'touch /heron/this-is-%%os%%-test'
+  command: bash -c 'mkdir /abc && touch /abc/this-is-%%os%%-test && mkdir /abc/sub2 && touch /abc/sub2/this-is-%%os%%-test-2'
 inputs:
   artifacts:
   - from: "%%checkout_artifact%%"
@@ -24,7 +24,9 @@ inputs:
 outputs:
   artifacts:
     build_output:
-      path: "/heron"
+      path: "/abc"
+    build_output_2:
+      path: "/abc/sub2"
 
 ---
 type: service_template
@@ -37,14 +39,17 @@ container:
     cpu_cores: 1.5
   image: streamlio/build:latest-heron-%%os%%
   docker_options: "-e CC=%%build_env_cc%% -e CXX=%%build_env_cxx%% -e CPP=%%build_env_cpp%% -e CXXCPP=%%build_env_cxxcpp%%" 
-  command: bash -c 'ls -lrt /test_input'
+  command: bash -c 'ls -lrt /test_input && ls -lrt /test_input/subi2'
 inputs:
   artifacts:
   - from: "%%test_artifact_input%%"
     path: "/test_input"
+  - from: "%%test_artifact_input_2%%"
+    path: "/test_input/subi2"
   parameters:
     os:
     test_artifact_input:
+    test_artifact_input_2:
     build_env_cc:
     build_env_cxx:
     build_env_cpp:
@@ -64,6 +69,7 @@ steps:
       template: heron-test-base
       parameters:
         test_artifact_input: "%%steps.build.build_output%%"
+        test_artifact_input_2: "%%steps.build.build_output_2%%"
 inputs:
   parameters:
     os:
