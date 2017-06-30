@@ -7,7 +7,7 @@ container:
   resources:
     mem_mib: 4000
     cpu_cores: 1.5
-  image: streamlio/build:latest-heron-abc%%os%%
+  image: streamlio/build:latest-heron-%%os%%
   docker_options: "-e CC=%%build_env_cc%% -e CXX=%%build_env_cxx%% -e CPP=%%build_env_cpp%% -e CXXCPP=%%build_env_cxxcpp%%" 
   command: bash -c 'mkdir /abc && touch /abc/this-is-%%os%%-test && mkdir /abc/sub2 && touch /abc/sub2/this-is-%%os%%-test-2'
 inputs:
